@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Student payment tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Fredoka:wght@500;600&display=swap">
+<style>
+:root{--bg:#fbf7f1;--card:#fff;--ink:#2a2521;--muted:#7a6f66;--line:#eadfd2;--accent:#d9572b;--accent-soft:#fde9df;--ok:#2f8a5b;--warn:#b8741a;--warn-soft:#fff1d6;--bad:#c0392b;--bad-soft:#fde4e0;--shadow:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--card:#26211e;--ink:#f3ece4;--muted:#a79b90;--line:#3a322d;--accent:#f0744a;--accent-soft:#3b261d;--ok:#5ac28a;--warn:#e9b050;--warn-soft:#3a2d15;--bad:#ef7b6d;--bad-soft:#40201b;--shadow:none}}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4;padding:20px 14px 80px}
+.wrap{max-width:880px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+h1{font-family:'Fredoka',sans-serif;font-weight:600;font-size:28px;margin:0}
+.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.btns,.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions{margin-top:12px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 12px;font-weight:600;font-size:14px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+button.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.banner{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.banner.warn{background:var(--warn-soft);color:var(--warn)}.banner.bad{background:var(--bad-soft);color:var(--bad)}.banner.info{background:var(--accent-soft);color:var(--accent)}
+h2{font-family:'Fredoka',sans-serif;font-weight:500;font-size:17px;margin:22px 0 8px;display:flex;gap:8px;align-items:center}
+h2 .count{background:var(--accent-soft);color:var(--accent);border-radius:99px;font-size:13px;padding:1px 9px;font-family:'Nunito'}
+.row,.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.row.hot{border-color:var(--accent);border-width:2px}
+.top{display:grid;grid-template-columns:1.3fr 1.2fr auto;gap:12px;align-items:center}
+.name{font-weight:800;font-size:17px}.meta{color:var(--muted);font-size:13px}
+.dots{display:flex;gap:4px;margin-top:6px}.dot{width:9px;height:9px;border-radius:50%;background:var(--line)}.dot.on{background:var(--ok)}
+.when{font-weight:800;font-size:16px}
+.chip{display:inline-block;border-radius:99px;padding:1px 9px;font-size:12px;font-weight:800;margin-left:6px;vertical-align:1px}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.calm{background:var(--line);color:var(--muted)}
+.amount{font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;text-align:right;white-space:nowrap}
+.then{color:var(--muted);font-size:13px;margin-top:2px}
+.shift{display:inline-flex;gap:6px;align-items:center;background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:6px}
+.shift button{padding:0 6px;font-size:11px;border-radius:6px;border-color:var(--warn);color:var(--warn);background:transparent}
+.sect{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+textarea,input,select{font:inherit;width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--ink)}
+textarea{min-height:120px;resize:vertical}
+.empty{color:var(--muted);padding:18px;text-align:center;border:1px dashed var(--line);border-radius:16px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;display:flex;gap:12px;align-items:center;z-index:50;max-width:92vw}
+.toast button{background:transparent;color:var(--bg);border-color:var(--bg);padding:2px 10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:10px 0 3px}
+.hint{font-size:12px;color:var(--muted);margin-top:3px}
+@media (max-width:640px){.top{grid-template-columns:1fr auto}.top .mid{grid-column:1/-1;order:3}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1>💌 Payments</h1><div class="sub" id="sync"></div></div>
+    <div class="btns">
+      <button id="refresh">↻ Refresh</button>
+      <button id="add">+ Add student</button>
+      <button id="gear">⚙ Settings</button>
+    </div>
+  </header>
+  <div id="banners"></div>
+  <div id="panel"></div>
+  <div id="list"></div>
+</div>
+
+<script>
+"use strict";
+/* Everything personal (students, prices, calendar ID, Google client ID) is stored only in THIS browser
+   (localStorage). Nothing about your students is in this file. */
+var TZ = "America/Toronto";
+var KEY = "payment-tracker-v1";
+var D = { students: [], settings: { clientId: "", calId: "" } };   // saved data
+var events = [], token = null, tokenClient = null;
+var st = { cal: "off", syncedAt: null }, ui = { edit: null, msg: {}, settings: false, adding: false };
+
+/* ---------- tiny helpers ---------- */
+function h(tag, attrs) {
+  var el = document.createElement(tag); attrs = attrs || {};
+  Object.keys(attrs).forEach(function (k) {
+    var v = attrs[k];
+    if (k === "class") el.className = v;
+    else if (k.indexOf("on") === 0) el.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) el.setAttribute(k, v === true ? "" : v);
+  });
+  for (var i = 2; i < arguments.length; i++) [].concat(arguments[i]).forEach(function (k) {
+    if (k == null || k === false) return; el.append(k.nodeType ? k : document.createTextNode(String(k)));
+  });
+  return el;
+}
+var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var TRMON = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+function todayKey() { try { return new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date()); } catch (e) { return new Date().toISOString().slice(0, 10); } }
+function dnum(k) { var p = k.split("-").map(Number); return Date.UTC(p[0], p[1] - 1, p[2]) / 86400000; }
+function diff(a, b) { return dnum(a) - dnum(b); }
+function dt(k) { return new Date(dnum(k) * 86400000); }
+function fmtDate(k) { var t = dt(k); return DOW[t.getUTCDay()] + " " + t.getUTCDate() + " " + MON[t.getUTCMonth()]; }
+function fmtShort(k) { var t = dt(k); return t.getUTCDate() + " " + MON[t.getUTCMonth()]; }
+function fmtTR(k) { var t = dt(k); return t.getUTCDate() + " " + TRMON[t.getUTCMonth()]; }
+var SYM = { TRY: ["", " TL"], USD: ["$", ""], EUR: ["€", ""] };
+function num(n) { return n.toLocaleString("en-US", { maximumFractionDigits: 2 }); }
+function money(n, c) { var s = SYM[c] || ["", " " + c]; return s[0] + num(n) + s[1]; }
+function moneyTR(n, c) { var t = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); return c === "TRY" ? t + " TL" : c === "USD" ? t + " USD" : c === "EUR" ? t + " euro" : t + " " + c; }
+function slug(s) { return s.toLowerCase().replace(/ü/g,"u").replace(/ö/g,"o").replace(/ş/g,"s").replace(/ç/g,"c").replace(/ğ/g,"g").replace(/ı/g,"i").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { toast("Couldn't save in this browser"); } }
+function load() { try { var t = localStorage.getItem(KEY); if (t) { var o = JSON.parse(t); D.students = o.students || []; D.settings = Object.assign(D.settings, o.settings || {}); } } catch (e) {} }
+var toastTimer;
+function toast(text, label, action) {
+  var o = document.getElementById("toast"); if (o) o.remove();
+  var t = h("div", { class: "toast", id: "toast" }, h("span", {}, text), label ? h("button", { onclick: function () { t.remove(); action(); } }, label) : null);
+  document.body.append(t); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.remove(); }, 7000);
+}
+
+/* ---------- Google Calendar (read-only, signs in with your Google account) ---------- */
+function loadGIS() {
+  return new Promise(function (res, rej) {
+    if (window.google && google.accounts && google.accounts.oauth2) return res();
+    var s = document.createElement("script"); s.src = "https://accounts.google.com/gsi/client"; s.async = true;
+    s.onload = function () { res(); }; s.onerror = function () { rej(new Error("Couldn't load Google sign-in")); };
+    document.head.append(s);
+  });
+}
+async function connect(silent) {
+  var S = D.settings;
+  if (!S.clientId || !S.calId) { st.cal = "setup"; render(); return; }
+  try {
+    await loadGIS();
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: S.clientId, scope: "https://www.googleapis.com/auth/calendar.readonly",
+      callback: function (r) {
+        if (r.error) { st.cal = "signin"; render(); return; }
+        token = r.access_token; try { localStorage.setItem(KEY + "-linked", "1"); } catch (e) {}
+        refreshCal();
+      },
+      error_callback: function () { st.cal = "signin"; render(); }
+    });
+    tokenClient.requestAccessToken({ prompt: silent ? "" : "select_account" });
+  } catch (e) { st.cal = "error"; st.msg = e.message; render(); }
+}
+async function refreshCal() {
+  if (!token) return connect(false);
+  st.cal = "loading"; render();
+  try {
+    var starts = D.students.map(function (s) { return s.blockStart; }).filter(Boolean).sort();
+    var min = (starts[0] || todayKey()) + "T00:00:00Z";
+    var max = new Date(Date.now() + 300 * 86400000).toISOString();
+    var all = [], pt = null;
+    do {
+      var p = { singleEvents: "true", orderBy: "startTime", timeMin: min, timeMax: max, maxResults: "2500" };
+      if (pt) p.pageToken = pt;
+      var r = await fetch("https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(D.settings.calId) + "/events?" + new URLSearchParams(p), { headers: { Authorization: "Bearer " + token } });
+      if (r.status === 401) { token = null; st.cal = "signin"; render(); return; }
+      if (!r.ok) { st.cal = r.status === 404 ? "badcal" : "error"; st.msg = "Google said " + r.status; render(); return; }
+      var j = await r.json(); all = all.concat(j.items || []); pt = j.nextPageToken;
+    } while (pt);
+    var BAD = /no class|cancel|postpon|iptal|ertele/;
+    events = all.map(function (e) {
+      var d = e.start && (e.start.dateTime || e.start.date); if (!d || e.status === "cancelled") return null;
+      var t = (e.summary || "").toLowerCase().trim(); if (BAD.test(t)) return null;
+      return { title: t, date: d.slice(0, 10), time: d.length > 10 ? d.slice(11, 16) : "" };
+    }).filter(Boolean).sort(function (a, b) { return (a.date + a.time) < (b.date + b.time) ? -1 : 1; });
+    st.cal = "ok"; st.syncedAt = new Date();
+  } catch (e) { st.cal = "error"; st.msg = e.message; }
+  render();
+}
+
+/* ---------- payment logic ---------- */
+function matches(ev, p) { var t = ev.title; return t === p || t.indexOf(p + " ") === 0 || t.indexOf(p + "(") === 0; }
+function plan(s, paidOverride) {
+  var N = Math.max(1, +s.lessons || 4), per = (+s.rate || 0) * (+s.kids || 1) * N, paid = paidOverride || s.paid || [];
+  var prefix = (s.cal || s.name || "").toLowerCase().replace(/\s*\(.*$/, "").trim(), today = todayKey();
+  var ls = events.filter(function (e) { return matches(e, prefix) && e.date >= s.blockStart; }), pays = [];
+  for (var j = 1; j * N <= ls.length && j <= 12; j++) {
+    var b = ls.slice((j - 1) * N, j * N);
+    pays.push({ j: j, date: b[N - 1].date, amount: per, paid: paid.indexOf(j) >= 0, N: N, done: b.filter(function (x) { return x.date <= today; }).length });
+  }
+  return { N: N, per: per, pays: pays };
+}
+function draft(s, p) {
+  var g = (s.greeting || "Merhaba").trim();
+  return [g + (g.toLowerCase().indexOf("merhaba") === 0 ? "" : ",") + " 🌸", "",
+    "📌 Paketimizin son dersi " + fmtTR(p.date) + " tarihinde. Bir sonraki " + p.N + " derslik paket için ödeme: " + moneyTR(p.amount, s.currency), "",
+    s.tone === "sen" ? "Müsait olduğunda gönderebilirsin, teşekkürler 😊" : "Müsait olduğunuzda gönderebilirsiniz, teşekkür ederim 😊"].join("\n");
+}
+function markPaid(s, p) {
+  var oldPaid = (s.paid || []).slice(), oldExp = s.expected;
+  s.paid = oldPaid.concat([p.j]);
+  var nx = plan(s).pays.filter(function (x) { return !x.paid; })[0];
+  s.expected = nx ? nx.date : ""; save(); render();
+  toast(s.name + " marked paid ✓", "Undo", function () { s.paid = oldPaid; s.expected = oldExp; save(); render(); });
+}
+
+/* ---------- screens ---------- */
+function chip(d) {
+  if (d < 0) return h("span", { class: "chip bad" }, "Overdue " + (-d) + "d");
+  if (d === 0) return h("span", { class: "chip bad" }, "Today");
+  if (d === 1) return h("span", { class: "chip warn" }, "Tomorrow");
+  return h("span", { class: "chip " + (d <= 7 ? "warn" : "calm") }, "in " + d + " days");
+}
+function banners() {
+  var b = document.getElementById("banners"); b.replaceChildren();
+  var sync = document.getElementById("sync"), c = st.cal, m = null;
+  sync.textContent = c === "ok" ? "Live from your calendar · synced " + st.syncedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+    : c === "loading" ? "Reading your calendar…" : "Calendar not connected — showing the dates saved on this device";
+  if (c === "off" || c === "setup") m = ["info", D.settings.clientId ? "Connect your Google Calendar to keep payment dates up to date." : "Open ⚙ Settings to connect your Google Calendar.", D.settings.clientId ? "Connect" : "Settings", D.settings.clientId ? function () { connect(false); } : function () { ui.settings = true; render(); }];
+  else if (c === "signin") m = ["warn", "Google needs you to sign in again.", "Connect", function () { connect(false); }];
+  else if (c === "badcal") m = ["bad", "That calendar ID wasn't found. Check it in ⚙ Settings.", "Settings", function () { ui.settings = true; render(); }];
+  else if (c === "error") m = ["bad", "Couldn't read the calendar" + (st.msg ? " (" + st.msg + ")" : "") + ".", "Try again", function () { refreshCal(); }];
+  if (m) b.append(h("div", { class: "banner " + m[0] }, h("span", {}, m[1]), h("button", { onclick: m[3] }, m[2])));
+}
+function field(f, label, key, val, type, hint) {
+  f[key] = h("input", { type: type || "text", value: val == null ? "" : val, step: type === "number" ? "any" : null });
+  return h("div", {}, h("label", {}, label), f[key], hint ? h("div", { class: "hint" }, hint) : null);
+}
+function editForm(s) {
+  var isNew = !s.id, f = {};
+  f.currency = h("select", {}, ["TRY", "USD", "EUR"].map(function (c) { return h("option", { value: c, selected: c === s.currency }, c === "TRY" ? "TL (TRY)" : c); }));
+  f.tone = h("select", {}, [["siz", "Formal (siz)"], ["sen", "Friendly (sen)"]].map(function (t) { return h("option", { value: t[0], selected: t[0] === s.tone }, t[1]); }));
+  return h("div", { class: "sect" },
+    field(f, "Name", "name", s.name),
+    field(f, "Calendar title starts with", "cal", s.cal, "text", "Events look like “betül (1)” — type just the lowercase name."),
+    h("div", { class: "grid2" }, field(f, "Lessons per payment", "lessons", s.lessons, "number"), field(f, "Kids on one calendar event", "kids", s.kids, "number", "2 for Ahmethan & Aslıhan")),
+    h("div", { class: "grid2" }, field(f, "Price per lesson (per kid)", "rate", s.rate, "number"), h("div", {}, h("label", {}, "Currency"), f.currency)),
+    h("div", { class: "grid2" },
+      field(f, "First lesson of the current paid block", "blockStart", s.blockStart, "date", "Lessons are counted from here; every Nth is a payment day."),
+      field(f, "Next payment date (used when calendar is offline)", "expected", s.expected, "date")),
+    field(f, "Who do I message?", "greeting", s.greeting, "text", "e.g. Firdevs Teyze"),
+    h("div", {}, h("label", {}, "Tone"), f.tone),
+    field(f, "Note", "note", s.note),
+    h("div", { class: "actions" },
+      h("button", { class: "primary", onclick: function () {
+        var name = f.name.value.trim(); if (!name) { toast("Please add a name"); return; }
+        var o = isNew ? {} : s;
+        Object.assign(o, { name: name, cal: (f.cal.value.trim() || name).toLowerCase(), lessons: +f.lessons.value || 4, kids: +f.kids.value || 1,
+          rate: +f.rate.value || 0, currency: f.currency.value, blockStart: f.blockStart.value || todayKey(), expected: f.expected.value || "",
+          greeting: f.greeting.value.trim(), tone: f.tone.value, note: f.note.value.trim() });
+        if (isNew) { o.id = slug(name) || "s" + Date.now(); o.paid = []; if (D.students.some(function (x) { return x.id === o.id; })) { toast(name + " is already in the list — use Edit on their card"); return; } D.students.push(o); }
+        save(); ui.edit = null; ui.adding = false; render(); toast("Saved ✓");
+      } }, "Save"),
+      h("button", { onclick: function () { ui.edit = null; ui.adding = false; render(); } }, "Cancel"),
+      !isNew ? h("button", { class: "ghost", style: "color:var(--bad);margin-left:auto", onclick: function () {
+        if (this.dataset.sure !== "1") { this.dataset.sure = "1"; this.textContent = "Tap again to remove"; return; }
+        D.students = D.students.filter(function (x) { return x !== s; }); save(); ui.edit = null; render();
+      } }, "Remove") : null));
+}
+function rowFor(s, today) {
+  var live = st.cal === "ok", pl = plan(s), nx = pl.pays.filter(function (x) { return !x.paid; })[0] || null, offline = false;
+  if (!live && s.expected) { nx = { j: 0, date: s.expected, amount: pl.per, done: 0, N: pl.N }; offline = true; }
+  var d = nx ? diff(nx.date, today) : 999, hot = !!nx && d <= 7;
+  var later = nx && !offline ? pl.pays.filter(function (x) { return !x.paid && x.j > nx.j; }).slice(0, 2) : [], paidN = (s.paid || []).length;
+  var dots = nx && !offline ? h("div", { class: "dots" }, Array.from({ length: Math.min(nx.N, 12) }, function (_, i) { return h("div", { class: "dot" + (i < nx.done ? " on" : "") }); })) : null;
+  var shift = null;
+  if (nx && !offline && s.expected && s.expected !== nx.date) {
+    var dd = diff(nx.date, s.expected);
+    shift = h("div", { class: "shift" }, "↻ " + (dd > 0 ? "pushed " + dd + " day" + (dd === 1 ? "" : "s") + " later" : "moved " + (-dd) + " day" + (dd === -1 ? "" : "s") + " earlier") + " · was " + fmtShort(s.expected),
+      h("button", { onclick: function () { s.expected = nx.date; save(); render(); } }, "OK"));
+  }
+  var then = offline ? "date saved on this device" : later.length ? "then " + later.map(function (x) { return fmtShort(x.date); }).join(" · ") : paidN ? "✓ " + paidN + " already paid" : "";
+  var row = h("div", { class: "row" + (hot ? " hot" : "") },
+    h("div", { class: "top" },
+      h("div", {}, h("div", { class: "name" }, s.name), h("div", { class: "meta" }, money(+s.rate || 0, s.currency) + (+s.kids > 1 ? " × " + s.kids + " kids" : "") + " × " + pl.N + " lessons"), dots),
+      h("div", { class: "mid" }, nx ? [h("div", { class: "when" }, fmtDate(nx.date), chip(d)), h("div", { class: "then" }, then), shift]
+        : h("div", { class: "meta" }, st.cal === "loading" ? "Checking calendar…" : pl.pays.length ? "All payments in the calendar are marked paid ✓" : "No payment date found — check “first lesson of the block” in Edit")),
+      nx ? h("div", { class: "amount" }, money(nx.amount, s.currency)) : null),
+    s.note ? h("div", { class: "meta", style: "margin-top:8px" }, "📝 " + s.note) : null,
+    h("div", { class: "actions" },
+      nx && !offline ? h("button", { class: "ok", onclick: function () { markPaid(s, nx); } }, "✓ Paid") : null,
+      nx ? h("button", { class: hot ? "primary" : "", onclick: function () { if (ui.msg[s.id] != null) delete ui.msg[s.id]; else ui.msg[s.id] = draft(s, nx); render(); } }, "💬 Message") : null,
+      h("button", { class: "ghost", onclick: function () { ui.edit = ui.edit === s.id ? null : s.id; render(); } }, ui.edit === s.id ? "Close edit" : "Edit")),
+    ui.msg[s.id] != null ? h("div", { class: "sect" }, h("textarea", { id: "ta-" + s.id, oninput: function (e) { ui.msg[s.id] = e.target.value; } }, ui.msg[s.id]),
+      h("div", { class: "actions" }, h("button", { class: "primary", onclick: function () {
+        var ta = document.getElementById("ta-" + s.id), fail = function () { ta.focus(); ta.select(); toast("Press Ctrl/Cmd + C to copy"); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(function () { toast("Copied — paste it into WhatsApp"); }, fail); else fail();
+      } }, "Copy"), h("button", { class: "ghost", onclick: function () { delete ui.msg[s.id]; render(); } }, "Close"))) : null,
+    ui.edit === s.id ? editForm(s) : null);
+  return { row: row, d: d, has: !!nx };
+}
+function settingsPanel() {
+  var f = {}, S = D.settings;
+  var box = h("textarea", { placeholder: "Paste the contents of my-students.json here" });
+  return h("div", { class: "panel" },
+    h("h2", { style: "margin-top:0" }, "Settings"),
+    field(f, "Google OAuth client ID", "clientId", S.clientId, "text", "From Google Cloud Console (see README). Needed once."),
+    field(f, "Calendar ID of your tutoring calendar", "calId", S.calId, "text", "Google Calendar → calendar settings → Integrate calendar → Calendar ID"),
+    h("div", { class: "actions" },
+      h("button", { class: "primary", onclick: function () { S.clientId = f.clientId.value.trim(); S.calId = f.calId.value.trim(); save(); toast("Saved"); connect(false); } }, "Save & connect"),
+      h("button", { class: "ghost", onclick: function () { ui.settings = false; render(); } }, "Close")),
+    h("div", { class: "sect" }, h("label", {}, "Import / back up students"), box,
+      h("div", { class: "actions" },
+        h("button", { onclick: function () {
+          try { var o = JSON.parse(box.value); if (o.students) D.students = o.students; if (o.calendarId && !S.calId) S.calId = o.calendarId; save(); ui.settings = false; render(); toast("Imported " + D.students.length + " students"); }
+          catch (e) { toast("That doesn't look like the students file"); }
+        } }, "Import"),
+        h("button", { onclick: function () {
+          var txt = JSON.stringify({ calendarId: S.calId, students: D.students }, null, 1);
+          box.value = txt; box.select();
+          if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { toast("Backup copied"); }, function () { toast("Select the text and copy it"); });
+        } }, "Copy backup"))));
+}
+function render() {
+  var a = document.activeElement;
+  if (a && (a.tagName === "TEXTAREA" || a.tagName === "INPUT" || a.tagName === "SELECT")) return;   // don't interrupt typing
+  try {
+    banners();
+    var p = document.getElementById("panel"); p.replaceChildren();
+    if (ui.settings) p.append(settingsPanel());
+    if (ui.adding) p.append(h("div", { class: "panel" }, h("h2", { style: "margin-top:0" }, "Add student"), editForm({ lessons: 4, kids: 1, rate: 0, currency: "TRY", blockStart: todayKey(), tone: "siz", cal: "", name: "" })));
+    var list = document.getElementById("list"); list.replaceChildren();
+    if (!D.students.length) { list.append(h("div", { class: "empty" }, "No students yet. Open ⚙ Settings and import your students file, or tap “Add student”.")); return; }
+    var today = todayKey(), built = D.students.map(function (s) { return rowFor(s, today); }).sort(function (x, y) { return x.d - y.d; });
+    var soon = built.filter(function (x) { return x.has && x.d <= 7; }), rest = built.filter(function (x) { return !(x.has && x.d <= 7); });
+    list.append(h("h2", {}, "Ask this week", h("span", { class: "count" }, soon.length)));
+    if (soon.length) soon.forEach(function (x) { list.append(x.row); });
+    else list.append(h("div", { class: "empty" }, st.cal === "loading" ? "Checking your calendar…" : "Nobody to ask in the next 7 days 🎉"));
+    if (rest.length) { list.append(h("h2", {}, "Coming up", h("span", { class: "count" }, rest.length))); rest.forEach(function (x) { list.append(x.row); }); }
+  } catch (e) { document.getElementById("list").replaceChildren(h("div", { class: "banner bad" }, "Something went wrong drawing the list: " + e.message)); }
+}
+
+/* ---------- start ---------- */
+document.getElementById("refresh").addEventListener("click", function () { refreshCal(); });
+document.getElementById("add").addEventListener("click", function () { ui.adding = true; ui.settings = false; render(); window.scrollTo(0, 0); });
+document.getElementById("gear").addEventListener("click", function () { ui.settings = !ui.settings; render(); });
+document.addEventListener("visibilitychange", function () { if (!document.hidden && token && st.syncedAt && Date.now() - st.syncedAt.getTime() > 180000) refreshCal(); });
+load(); render();
+if (D.settings.clientId && D.settings.calId) { var linked = false; try { linked = !!localStorage.getItem(KEY + "-linked"); } catch (e) {} if (linked) connect(true); else { st.cal = "off"; render(); } }
+</script>
+</body>
+</html>
